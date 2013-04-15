@@ -1,5 +1,7 @@
 package ivivi.redis.core.handler;
 
+import ivivi.redis.core.test.Steper;
+
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -24,21 +26,22 @@ public class ServerHandler extends Handler {
 		SocketChannel socketChannel = serverSocketChannel.accept();
 		socketChannel.configureBlocking(false);
 		
-		socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+		socketChannel.register(selector, SelectionKey.OP_READ);
+		System.out.println(Steper.getStep() + "accept" + key);
 	}
 
 	@Override
-	protected void handleConnect(SelectionKey key) throws IOException {
-		
+	protected void handleConnect(SelectionKey key,Selector selector) throws IOException {
+		System.out.println(Steper.getStep() + "conn" + key.hashCode());
 	}
 
 	@Override
-	protected void handleRead(SelectionKey key) throws IOException {
-		
+	protected void handleRead(SelectionKey key,Selector selector) throws IOException {
+		System.out.println(Steper.getStep() + "read" + key);
 	}
 
 	@Override
-	protected void handleWrite(SelectionKey key) throws IOException {
-		
+	protected void handleWrite(SelectionKey key,Selector selector) throws IOException {
+		System.out.println(Steper.getStep() + "write" + key.hashCode());
 	}
 }

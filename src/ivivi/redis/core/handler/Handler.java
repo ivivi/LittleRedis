@@ -10,16 +10,16 @@ public abstract class Handler {
 		if(key.isAcceptable()) {
 			handleAccept(key,selector);
 		} else if(key.isConnectable()) {
-			handleConnect(key);
+			handleConnect(key,selector);
 		} else if(key.isReadable()) {
-			handleRead(key);
+			handleRead(key,selector);
 		} else if(key.isWritable()) {
-			handleWrite(key);
+			handleWrite(key,selector);
 		}
 	}
 	
 	protected abstract void handleAccept (SelectionKey key,Selector selector) throws IOException;
-	protected abstract void handleConnect(SelectionKey key) throws IOException;
-	protected abstract void handleRead(SelectionKey key) throws IOException;
-	protected abstract void handleWrite(SelectionKey key) throws IOException;
+	protected abstract void handleConnect(SelectionKey key,Selector selector) throws IOException;
+	protected abstract void handleRead(SelectionKey key,Selector selector) throws IOException;
+	protected abstract void handleWrite(SelectionKey key,Selector selector) throws IOException;
 }
