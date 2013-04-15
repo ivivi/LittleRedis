@@ -10,16 +10,17 @@ import java.util.Iterator;
 
 public class NIOServer {
 	
+	private final ServerSocketChannel serverSocketChannel;
 	private final Selector selector;
 	private boolean listenSwitch = true;
 	
 	public NIOServer() throws IOException {
+		serverSocketChannel = ServerSocketChannel.open();
 		selector = Selector.open();
 	}
 	
 	public void initServer(int port) throws IOException {
 		
-		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.socket().bind(new InetSocketAddress(port));
 		
@@ -70,7 +71,8 @@ public class NIOServer {
 		socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
 	}
 
-	public void closeServer() {
-		
+	public void closeServer() throws IOException {
+		serverSocketChannel.close();
+		selector.close();
 	}
 }
