@@ -1,5 +1,7 @@
 package ivivi.redis.core.server;
 
+import ivivi.redis.core.handler.ServerHandler;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
@@ -12,11 +14,13 @@ public class NIOServer {
 	
 	private final ServerSocketChannel serverSocketChannel;
 	private final Selector selector;
+	private final ServerHandler handler;
 	private boolean listenSwitch = true;
 	
 	public NIOServer() throws IOException {
 		serverSocketChannel = ServerSocketChannel.open();
 		selector = Selector.open();
+		handler = ServerHandler.getServerHandler();
 	}
 	
 	public void initServer(int port) throws IOException {
@@ -45,30 +49,7 @@ public class NIOServer {
 	}
 	
 	private void handle(SelectionKey key) throws IOException {
-		
-		if(key.isAcceptable()) {
-			handleAccept(key);
-		} else if(key.isReadable()) {
-			handleRead(key);
-		} else if(key.isWritable()) {
-			handleWrite(key);
-		}
-	}
-
-	private void handleWrite(SelectionKey key) {
-		
-	}
-
-	private void handleRead(SelectionKey key) {
-		
-	}
-
-	private void handleAccept(SelectionKey key) throws IOException {
-		ServerSocketChannel serverSocketChannel = (ServerSocketChannel)key.channel();
-		SocketChannel socketChannel = serverSocketChannel.accept();
-		socketChannel.configureBlocking(false);
-		
-		socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+		handler.handle(key, selector);
 	}
 
 	public void closeServer() throws IOException {
