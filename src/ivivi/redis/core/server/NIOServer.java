@@ -36,6 +36,8 @@ public class NIOServer {
 	}
 	
 	private void listen() throws IOException {
+		System.out.println("listening");
+		
 		for(;listenSwitch;) {
 			selector.select();
 			Iterator<SelectionKey> iter = selector.selectedKeys().iterator();
