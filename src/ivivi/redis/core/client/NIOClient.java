@@ -15,11 +15,13 @@ public class NIOClient {
 	private final Selector selector;
 	private final ClientHandler handler;
 	private boolean connectSwitch = true;
+	private boolean connected = false;
 	
+
 	public NIOClient() throws IOException {
 		socketChannel = SocketChannel.open();
 		selector = Selector.open();
-		handler = ClientHandler.getClientHandler();
+		handler = ClientHandler.getClientHandler(this);
 	}
 	
 	public void initClient() throws IOException {
@@ -48,5 +50,13 @@ public class NIOClient {
 	public void closeClient() throws IOException {
 		socketChannel.close();
 		selector.close();
+	}
+	
+	public boolean isConnected() {
+		return connected;
+	}
+	
+	public void setConnected(boolean connected) {
+		this.connected = connected;
 	}
 }

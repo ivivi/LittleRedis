@@ -1,5 +1,6 @@
 package ivivi.redis.core.handler;
 
+import ivivi.redis.core.client.NIOClient;
 import ivivi.redis.core.test.Steper;
 
 import java.io.IOException;
@@ -9,14 +10,14 @@ import java.nio.channels.SocketChannel;
 
 public class ClientHandler extends Handler {
 	
-	private static final ClientHandler handler = new ClientHandler();
+	private final NIOClient client;
 	
-	private ClientHandler() {
-		
+	private ClientHandler(NIOClient client) {
+		this.client = client;
 	}
 	
-	public static ClientHandler getClientHandler() {
-		return handler;
+	public static ClientHandler getClientHandler(NIOClient client) {
+		return new ClientHandler(client);
 	}
 
 	@Override
@@ -30,8 +31,8 @@ public class ClientHandler extends Handler {
 		for(;;) {
 			if(socketChannel.finishConnect()) break;
 		}
+		client.setConnected(true);
 		socketChannel.register(selector, SelectionKey.OP_WRITE);
-		System.out.println(Steper.getStep() + "conn" + key.hashCode());
 	}
 
 	@Override
