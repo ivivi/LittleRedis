@@ -5,7 +5,8 @@ public class ConfigUtil {
 	private static final HashMap<String,String> configs = new HashMap<String,String>();
 	
 	static {
-		//TODO: parse config file	
+		//TODO: parse config file
+		//just test rebase
 	}
 	
 	public static int getIntegerConfig(String key) {
