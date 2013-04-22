@@ -1,5 +1,7 @@
 package ivivi.redis.core.util;
 
+import java.util.HashMap;
+
 public class ConfigUtil {
 	
 	private static final HashMap<String,String> configs = new HashMap<String,String>();
