@@ -10,6 +10,7 @@ public class ClientPool {
 	
 	private static LinkedList<NIOClient> linkedList = new LinkedList<NIOClient>();
 	private static final byte[] lock = new byte[0];
+	private static final int timeout = ConfigUtil.getIntegerConfig("timeout");
 	
 	public static void initialPool(int poolSize) {
 		for(int i=0;i<poolSize;i++) {
@@ -33,20 +34,26 @@ public class ClientPool {
 		return null;
 	}
 	
+	/*
+	 * Guarded timed pattern
+	 */
 	public static NIOClient getClient() {
 		synchronized (lock) {
-			for(;;) {
-				if(linkedList.size() > 0) {
-					return linkedList.pop();
-				} else {
-					try {
-						lock.wait(1000);
-					} catch (InterruptedException e) {//be interrupted by calling this thread.interrupt()
-						continue;
-					}
+			long start = System.currentTimeMillis();
+			for(;linkedList.size() <= 0;) {
+				long now = System.currentTimeMillis();
+				long rest = timeout - (now - start);
+				if(rest <= 0) {//timed out
 					return initialClient();
 				}
+				try {
+					lock.wait(rest);
+				} catch (InterruptedException e) {
+					continue;
+				}
 			}
+			
+			return linkedList.pop();
 		}
 	}
 }

@@ -5,10 +5,10 @@ import java.util.HashMap;
 public class ConfigUtil {
 	
 	private static final HashMap<String,String> configs = new HashMap<String,String>();
+	private static boolean parsed = false;
 	
 	static {
-		//TODO: parse config file
-		//just test rebase
+		parseConfigFile();
 	}
 	
 	public static int getIntegerConfig(String key) {
@@ -19,5 +19,9 @@ public class ConfigUtil {
 	public static String getConfig(String key) {
 		
 		return null;
+	}
+	
+	private static void parseConfigFile() {
+		
 	}
 }
