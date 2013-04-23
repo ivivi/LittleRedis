@@ -11,8 +11,9 @@ public class ClientPool {
 	private static LinkedList<NIOClient> linkedList = new LinkedList<NIOClient>();
 	private static final byte[] lock = new byte[0];
 	private static final int timeout = ConfigUtil.getIntegerConfig("timeout");
+	private static final int poolSize = ConfigUtil.getIntegerConfig("client.pool.size");
 	
-	public static void initialPool(int poolSize) {
+	public static void initialPool() {
 		for(int i=0;i<poolSize;i++) {
 			linkedList.push(initialClient());
 		}
@@ -54,6 +55,19 @@ public class ClientPool {
 			}
 			
 			return linkedList.pop();
+		}
+	}
+	
+	public static void closeClient(NIOClient client) {
+		synchronized (lock) {
+			if(linkedList.size() < poolSize) {
+				if(!client.isConnected()) client = initialClient();
+				linkedList.push(client);
+			} else {
+				client = null;
+			}
+			
+			lock.notifyAll();
 		}
 	}
 }
