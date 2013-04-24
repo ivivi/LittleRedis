@@ -19,7 +19,7 @@ public class ClientPool {
 		}
 	}
 	
-	public static NIOClient initialClient() {
+	private static NIOClient initialClient() {
 		try {
 			NIOClient client = new NIOClient();
 			client.initClient();
@@ -61,8 +61,7 @@ public class ClientPool {
 	public static void closeClient(NIOClient client) {
 		synchronized (lock) {
 			if(linkedList.size() < poolSize) {
-				if(!client.isConnected()) client = initialClient();
-				linkedList.push(client);
+				linkedList.addLast(client);
 			} else {
 				client = null;
 			}

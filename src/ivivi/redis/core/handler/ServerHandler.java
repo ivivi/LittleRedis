@@ -1,8 +1,10 @@
 package ivivi.redis.core.handler;
 
 import ivivi.redis.core.test.Steper;
+import ivivi.redis.core.util.BufferUtil;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -11,6 +13,7 @@ import java.nio.channels.SocketChannel;
 public class ServerHandler extends Handler {
 	
 	private static final ServerHandler handler = new ServerHandler();
+	private static final ByteBuffer buffer = ByteBuffer.allocate(1024);
 	
 	private ServerHandler() {
 		
@@ -37,7 +40,22 @@ public class ServerHandler extends Handler {
 
 	@Override
 	protected void handleRead(SelectionKey key,Selector selector) throws IOException {
-		System.out.println(Steper.getStep() + "read" + key);
+		SocketChannel socketChannel = (SocketChannel)key.channel();
+		BufferUtil.clearBuffer(buffer);
+		
+		int count = socketChannel.read(buffer);
+
+		for(;count != -1;) {
+			buffer.flip();
+			for(;buffer.hasRemaining();) {
+				System.out.print(buffer.getChar());
+			}
+		  
+			BufferUtil.clearBuffer(buffer);
+			count = socketChannel.read(buffer);
+		}
+
+		System.out.println("have handled");
 	}
 
 	@Override

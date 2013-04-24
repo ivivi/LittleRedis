@@ -1,6 +1,7 @@
 package ivivi.redis.core.server;
 
 import ivivi.redis.core.handler.ServerHandler;
+import ivivi.redis.core.util.ConfigUtil;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -23,10 +24,10 @@ public class NIOServer {
 		handler = ServerHandler.getServerHandler();
 	}
 	
-	public void initServer(int port) throws IOException {
+	public void initServer() throws IOException {
 		
 		serverSocketChannel.configureBlocking(false);
-		serverSocketChannel.socket().bind(new InetSocketAddress(port));
+		serverSocketChannel.socket().bind(new InetSocketAddress(ConfigUtil.getIntegerConfig("port")));
 		
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 	}

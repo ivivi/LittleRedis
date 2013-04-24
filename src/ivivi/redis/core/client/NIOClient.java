@@ -14,6 +14,7 @@ public class NIOClient {
 	private final SocketChannel socketChannel;
 	private final Selector selector;
 	private final ClientHandler handler;
+
 	private boolean connectSwitch = true;
 	private boolean connected = false;
 	
@@ -59,4 +60,9 @@ public class NIOClient {
 	public void setConnected(boolean connected) {
 		this.connected = connected;
 	}
+	
+	public ClientHandler getHandler() {
+		return handler;
+	}
+	
 }
