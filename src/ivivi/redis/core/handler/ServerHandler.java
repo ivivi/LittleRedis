@@ -30,7 +30,6 @@ public class ServerHandler extends Handler {
 		socketChannel.configureBlocking(false);
 		
 		socketChannel.register(selector, SelectionKey.OP_READ);
-		System.out.println(Steper.getStep() + "accept" + key);
 	}
 
 	@Override
@@ -41,20 +40,19 @@ public class ServerHandler extends Handler {
 	@Override
 	protected void handleRead(SelectionKey key,Selector selector) throws IOException {
 		SocketChannel socketChannel = (SocketChannel)key.channel();
-		BufferUtil.clearBuffer(buffer);
+		BufferUtil.clearBuffer(buffer);//the position is set back to 0 and the limit to capacity
 		
-		int count = socketChannel.read(buffer);
-
-		for(;count != -1;) {
-			buffer.flip();
+		int count = 0;
+		for(;(count = socketChannel.read(buffer)) > 0;) {
+			buffer.flip();//sets the position back to 0, and sets the limit to where position just was.
 			for(;buffer.hasRemaining();) {
-				System.out.print(buffer.getChar());
+				System.out.print((char)buffer.get());
 			}
 		  
 			BufferUtil.clearBuffer(buffer);
-			count = socketChannel.read(buffer);
 		}
-
+		
+		System.out.println("");
 		System.out.println("have handled");
 	}
 

@@ -13,7 +13,8 @@ public class ConfigUtil {
 		configs.put("hostname", "localhost");
 		configs.put("port", "10001");
 		configs.put("client.pool.size", "3");
-		configs.put("timeout", "1000");
+		configs.put("client.timeout", "1000");
+		configs.put("socket.timeout", "1000");
 	}
 	
 	public static int getIntegerConfig(String key) {

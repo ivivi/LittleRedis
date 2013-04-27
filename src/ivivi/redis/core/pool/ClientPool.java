@@ -10,7 +10,7 @@ public class ClientPool {
 	
 	private static LinkedList<NIOClient> linkedList = new LinkedList<NIOClient>();
 	private static final byte[] lock = new byte[0];
-	private static final int timeout = ConfigUtil.getIntegerConfig("timeout");
+	private static final int timeout = ConfigUtil.getIntegerConfig("client.timeout");
 	private static final int poolSize = ConfigUtil.getIntegerConfig("client.pool.size");
 	
 	public static void initialPool() {
@@ -21,12 +21,13 @@ public class ClientPool {
 	
 	private static NIOClient initialClient() {
 		try {
-			NIOClient client = new NIOClient();
+			NIOClient client = new NIOClient(ConfigUtil.getConfig("hostname"), 
+					 						 ConfigUtil.getIntegerConfig("port"),
+					 						 ConfigUtil.getIntegerConfig("socket.timeout"));
 			client.initClient();
-			client.start(ConfigUtil.getConfig("hostname"), ConfigUtil.getIntegerConfig("port"));
 			
 			return client;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			
@@ -63,6 +64,7 @@ public class ClientPool {
 			if(linkedList.size() < poolSize) {
 				linkedList.addLast(client);
 			} else {
+				client.closeClient();
 				client = null;
 			}
 			

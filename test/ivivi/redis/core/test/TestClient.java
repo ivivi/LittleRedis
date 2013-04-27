@@ -7,13 +7,15 @@ import ivivi.redis.core.pool.ClientPool;
 
 public class TestClient {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 			
 		ClientPool.initialPool();
 		
 		NIOClient client = ClientPool.getClient();
 		
 		client.getHandler().exists("redis");
+		ClientPool.closeClient(client);
+		
 	}
 
 }

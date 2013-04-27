@@ -6,60 +6,75 @@ import ivivi.redis.core.test.Steper;
 import ivivi.redis.core.util.BufferUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 
-public class ClientHandler extends Handler implements BaseCommand {
+public class ClientHandler implements BaseCommand {
 	
-	private final NIOClient client;
-	private SocketChannel socketChannel;
-	private final ByteBuffer buffer;
+	private final Socket socket = new Socket();
+	private final String hostname;
+	private final int port;
+	private final int timeout;
+	private OutputStream os;
+	private InputStream is;
 	
-	private ClientHandler(NIOClient client) {
-		this.client = client;
-		this.buffer = ByteBuffer.allocate(1024);
+	private ClientHandler(String hostname,int port,int timeout) {
+		this.hostname = hostname;
+		this.port = port;
+		this.timeout = timeout;
 	}
 	
-	public static ClientHandler getClientHandler(NIOClient client) {
-		return new ClientHandler(client);
+	public static ClientHandler getClientHandler(String hostname,int port,int timeout) {
+		return new ClientHandler(hostname, port, timeout);
 	}
-
-	@Override
-	protected void handleAccept(SelectionKey key,Selector selector) throws IOException {
-		
-	}
-
-	@Override
-	protected void handleConnect(SelectionKey key,Selector selector) throws IOException {
-		//SocketChannel socketChannel = (SocketChannel)key.channel();
-		this.socketChannel = (SocketChannel)key.channel();
-		for(;;) {
-			if(socketChannel.finishConnect()) break;
+	
+	public void initHandler() {
+		try {
+			socket.setReuseAddress(true);
+			socket.setKeepAlive(true);
+			socket.setTcpNoDelay(true);
+			socket.setSoLinger(true,0);//Control calls close () method, the underlying socket is closed immediately
+			
+			socket.connect(new InetSocketAddress(hostname, port),timeout);
+			socket.setSoTimeout(timeout);
+			
+			os = socket.getOutputStream();
+			is = socket.getInputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		client.setConnected(true);
-		//socketChannel.register(selector, SelectionKey.OP_WRITE);
 	}
-
-	@Override
-	protected void handleRead(SelectionKey key,Selector selector) throws IOException {
-		System.out.println(Steper.getStep() + "read" + key.hashCode());
+	
+	public void close() {
+		try {
+			is.close();
+			os.close();
+            if (!socket.isClosed()) {
+                socket.close();
+            }
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-
-	@Override
-	protected void handleWrite(SelectionKey key,Selector selector) throws IOException {
-		System.out.println(Steper.getStep() + "write" + key.hashCode());
+	
+	public boolean isConnected() {
+		return socket.isConnected();
 	}
-
+	
 	/*
 	 * commands
 	 */
 	@Override
 	public void exists(String key) {
-		BufferUtil.str2buf(buffer, key);
 		try {
-			this.socketChannel.write(buffer);
+			this.os.write(key.getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -76,6 +91,5 @@ public class ClientHandler extends Handler implements BaseCommand {
 		// TODO Auto-generated method stub
 		
 	}
-	
 	
 }
