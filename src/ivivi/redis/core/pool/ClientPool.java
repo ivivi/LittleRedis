@@ -8,7 +8,7 @@ import java.util.LinkedList;
 
 public class ClientPool {
 	
-	private static LinkedList<NIOClient> linkedList = new LinkedList<NIOClient>();
+	private static final LinkedList<NIOClient> linkedList = new LinkedList<NIOClient>();
 	private static final byte[] lock = new byte[0];
 	private static final int timeout = ConfigUtil.getIntegerConfig("client.timeout");
 	private static final int poolSize = ConfigUtil.getIntegerConfig("client.pool.size");
@@ -70,5 +70,15 @@ public class ClientPool {
 			
 			lock.notifyAll();
 		}
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		
+		for(NIOClient client : linkedList) {
+			client.closeClient();
+		}
+		
+		super.finalize();
 	}
 }
