@@ -39,10 +39,18 @@ public class ServerHandler extends Handler {
 
 	@Override
 	protected void handleRead(SelectionKey key,Selector selector) throws IOException {
+		System.out.println("handleRead start");
+		
 		SocketChannel socketChannel = (SocketChannel)key.channel();
 		BufferUtil.clearBuffer(buffer);//the position is set back to 0 and the limit to capacity
 		
 		int count = 0;
+		/*
+		 * Because NIO SocektChannel will not block until the data is available for read. 
+		 * i.e, Non Blocking Channel can return 0 on read() operation.
+		 * On the otherhand, blocking channel will wait till the data is available and return how much data is available. 
+		 * i.e, Blocking channel will never return 0 on read() operation.
+		 */
 		for(;(count = socketChannel.read(buffer)) > 0;) {
 			buffer.flip();//sets the position back to 0, and sets the limit to where position just was.
 			for(;buffer.hasRemaining();) {
@@ -52,8 +60,11 @@ public class ServerHandler extends Handler {
 			BufferUtil.clearBuffer(buffer);
 		}
 		
-		System.out.println("");
-		System.out.println("have handled");
+		if(count == -1)	
+			socketChannel.close();
+		
+		
+		System.out.println("\r\nhandleRead end");
 	}
 
 	@Override
