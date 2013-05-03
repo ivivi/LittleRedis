@@ -2,8 +2,10 @@ package ivivi.redis.core.handler;
 
 import ivivi.redis.core.client.NIOClient;
 import ivivi.redis.core.command.BaseCommand;
+import ivivi.redis.core.message.Message;
 import ivivi.redis.core.test.Steper;
 import ivivi.redis.core.util.BufferUtil;
+import ivivi.redis.core.util.ByteUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,7 +76,15 @@ public class ClientHandler implements BaseCommand {
 	@Override
 	public void exists(String key) {
 		try {
-			this.os.write(key.getBytes());
+			
+			Message message = new Message();
+			message.head.setType((byte)1);
+			
+			message.body.setCommand(key);
+			message.head.setBodyLength(key.length() + 2);
+			
+			this.os.write(message.toBytes());
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -11,10 +11,16 @@ public class TestClient {
 			
 		ClientPool.initialPool();
 		
-		NIOClient client = ClientPool.getClient();
+		for(int i=0;;i++) {
+			NIOClient client = ClientPool.getClient();
+			client.getHandler().exists("redis" + i);
+			System.out.println(i);
+			
+			ClientPool.closeClient(client);
+			
+			Thread.sleep(2000);
+		}
 		
-		client.getHandler().exists("redis");
-		ClientPool.closeClient(client);
 		
 	}
 
