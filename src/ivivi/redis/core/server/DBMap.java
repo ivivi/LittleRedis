@@ -13,5 +13,12 @@ public class DBMap {
 		
 	private static final Map<SocketChannel,Integer> socket2db = new HashMap<SocketChannel, Integer>(); 
 	
+	public static final void registerSocket2db(SocketChannel sc,int index4db) {
+		socket2db.put(sc, index4db);
+	}
+	
+	public static final HashMap<String, Object> getDefaultDB() {
+		return dbs.get(0);
+	}
 	
 }

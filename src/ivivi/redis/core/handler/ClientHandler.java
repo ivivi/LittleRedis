@@ -1,24 +1,14 @@
 package ivivi.redis.core.handler;
 
-import ivivi.redis.core.client.NIOClient;
-import ivivi.redis.core.command.BaseCommand;
-import ivivi.redis.core.message.Message;
-import ivivi.redis.core.test.Steper;
-import ivivi.redis.core.util.BufferUtil;
-import ivivi.redis.core.util.ByteUtil;
+import ivivi.redis.core.command.impl.AggregatedCommandImpl;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.SocketChannel;
 
-public class ClientHandler implements BaseCommand {
+public class ClientHandler extends AggregatedCommandImpl {
 	
 	private final Socket socket = new Socket();
 	private final String hostname;
@@ -70,36 +60,20 @@ public class ClientHandler implements BaseCommand {
 		return socket.isConnected();
 	}
 	
-	/*
-	 * commands
-	 */
 	@Override
-	public void exists(String key) {
-		try {
-			
-			Message message = new Message();
-			message.head.setType((byte)1);
-			
-			message.body.setCommand(key);
-			message.head.setBodyLength(key.length() + 2);
-			
-			this.os.write(message.toBytes());
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public OutputStream getOS() {
+		if(null == os) 
+			initHandler();
+		
+		return os;
 	}
 
 	@Override
-	public void get(String key) {
-		// TODO Auto-generated method stub
+	public InputStream getIS() {
+		if(null == is)
+			initHandler();
 		
-	}
-
-	@Override
-	public void set(String key, String value) {
-		// TODO Auto-generated method stub
-		
+		return is;
 	}
 	
 }
