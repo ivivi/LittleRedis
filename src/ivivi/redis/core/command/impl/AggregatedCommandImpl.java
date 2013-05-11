@@ -11,43 +11,43 @@ public abstract class AggregatedCommandImpl implements AggregatedCommand {
 
 	@Override
 	public void del(String... keys) {
-		Message m = new Message(CommandType.BASE,CommandPrefix.DEL,keys);
+		Message m = new Message(CommandType.BASE_Strings,CommandPrefix.DEL,keys);
 		sendCommand(m);
 	}
 
 	@Override
 	public void dump(String key) {
-		Message m = new Message(CommandPrefix.DUMP,CommandType.BASE,key);
+		Message m = new Message(CommandPrefix.DUMP,CommandType.BASE_Strings,key);
 		sendCommand(m);
 	}
 
 	@Override
 	public void exists(String key) {
-		Message m = new Message(CommandPrefix.EXISTS,CommandType.BASE,key);
+		Message m = new Message(CommandPrefix.EXISTS,CommandType.BASE_Strings,key);
 		sendCommand(m);
 	}
 
 	@Override
 	public void expire(String key, int seconds) {
-		Message m = new Message(CommandType.BASE,CommandPrefix.EXPIRE,key,String.valueOf(seconds));
+		Message m = new Message(CommandType.BASE_Strings,CommandPrefix.EXPIRE,key,String.valueOf(seconds));
 		sendCommand(m);
 	}
 
 	@Override
 	public void expireAt(String key, long unixTimestamp) {
-		Message m = new Message(CommandType.BASE,CommandPrefix.EXPIREAT,key,String.valueOf(unixTimestamp));
+		Message m = new Message(CommandType.BASE_Strings,CommandPrefix.EXPIREAT,key,String.valueOf(unixTimestamp));
 		sendCommand(m);
 	}
 
 	@Override
 	public void get(String key) {
-		Message m = new Message(CommandPrefix.GET,CommandType.BASE,key);
+		Message m = new Message(CommandPrefix.GET,CommandType.BASE_Strings,key);
 		sendCommand(m);
 	}
 
 	@Override
 	public void set(String key, String value) {
-		Message m = new Message(CommandType.BASE,CommandPrefix.SET,key,value);
+		Message m = new Message(CommandType.BASE_Strings,CommandPrefix.SET,key,value);
 		sendCommand(m);
 	}
 	
