@@ -17,8 +17,17 @@ public class DBMap {
 		socket2db.put(sc, index4db);
 	}
 	
-	public static final HashMap<String, Object> getDefaultDB() {
+	private static final HashMap<String, Object> getDefaultDB() {
 		return dbs.get(0);
 	}
 	
+	private static final HashMap<String, Object> getDB(int index) {
+		return dbs.get(index);
+	}
+	
+	public static final HashMap<String, Object> getDB(SocketChannel sc) {
+		if(socket2db.containsKey(sc))
+			return getDB(socket2db.get(sc));
+		return getDefaultDB();
+	}
 }
