@@ -6,8 +6,9 @@ import ivivi.redis.core.util.ByteUtil;
 
 public class Message {
 	
-    private static final byte DOLLAR_BYTE = '$';
-    private static final byte ASTERISK_BYTE = '*';
+    private static final byte SEPARATOR_MAIN = '\b';
+    private static final byte SEPARATOR_SUB = '\f';
+    private static final byte SEPARATOR_SUB_SON = '\n';
 	
 	public Head head;
 	public Body body;
@@ -96,7 +97,17 @@ public class Message {
 		}
 		
 		private byte[] toBytes() {
-			return command.raw;
+			StringBuilder sb = new StringBuilder();
+			sb.append(command.name()).append(SEPARATOR_MAIN);
+			for(String key : keys) 
+				sb.append(key).append(SEPARATOR_SUB_SON);
+			sb.append(SEPARATOR_SUB);
+			for(String arg : args) 
+				sb.append(arg).append(SEPARATOR_SUB_SON);
+			
+			//Encodes this String into a sequence of bytes using the
+		    //platform's default charset, storing the result into a new byte array.
+			return sb.toString().getBytes();
 		}
 	}
 	
@@ -112,11 +123,11 @@ public class Message {
 		
 		head.bodyLength = body.toBytes().length;
 		
-		byte[] mb = new byte[7 + body.toBytes().length + 2];
-		System.arraycopy(head.toBytes(), 0, mb, 0, 7);
-		System.arraycopy(body.toBytes(), 0, mb, 7, mb.length-9);
-		System.arraycopy(tail.toBytes(), 0, mb, mb.length-2, 2);
+		byte[] mbytes = new byte[7 + body.toBytes().length + 2];
+		System.arraycopy(head.toBytes(), 0, mbytes, 0, 7);
+		System.arraycopy(body.toBytes(), 0, mbytes, 7, mbytes.length-9);
+		System.arraycopy(tail.toBytes(), 0, mbytes, mbytes.length-2, 2);
 		
-		return mb;
+		return mbytes;
 	}
 }
