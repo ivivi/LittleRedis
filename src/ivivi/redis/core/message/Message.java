@@ -3,12 +3,9 @@ package ivivi.redis.core.message;
 import ivivi.redis.core.command.impl.CommandPrefix;
 import ivivi.redis.core.command.impl.CommandType;
 import ivivi.redis.core.util.ByteUtil;
+import ivivi.redis.core.util.SeparatorUtil;
 
 public class Message {
-	
-    private static final byte SEPARATOR_MAIN = '\b';
-    private static final byte SEPARATOR_SUB = '\f';
-    private static final byte SEPARATOR_SUB_SON = '\n';
 	
 	public Head head;
 	public Body body;
@@ -98,13 +95,16 @@ public class Message {
 		
 		private byte[] toBytes() {
 			StringBuilder sb = new StringBuilder();
-			sb.append(command.name()).append(SEPARATOR_MAIN);
-			for(String key : keys) 
-				sb.append(key).append(SEPARATOR_SUB_SON);
-			sb.append(SEPARATOR_SUB);
-			for(String arg : args) 
-				sb.append(arg).append(SEPARATOR_SUB_SON);
-			
+			sb.append(command.name()).append(SeparatorUtil.SEPARATOR_MAIN);
+			if(null != keys) {
+				for(String key : keys) 
+					sb.append(key).append(SeparatorUtil.SEPARATOR_SUB_SON);
+			}
+			sb.append(SeparatorUtil.SEPARATOR_SUB);
+			if(null != args) {
+				for(String arg : args) 
+					sb.append(arg).append(SeparatorUtil.SEPARATOR_SUB_SON);
+			}
 			//Encodes this String into a sequence of bytes using the
 		    //platform's default charset, storing the result into a new byte array.
 			return sb.toString().getBytes();
