@@ -12,7 +12,12 @@ public class CommandTool {
 	}
 	
 	public static void sendCommand(final OutputStream os,final Message message) {
-		
+		try {
+			os.write(message.toBytes());
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("send failed");
+		}
 	}
 	
 }
