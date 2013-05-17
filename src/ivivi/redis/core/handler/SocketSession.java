@@ -4,7 +4,7 @@ import ivivi.redis.core.util.ByteUtil;
 
 public class SocketSession {
 	
-	private static final int builderSize = 32;
+	private static final int builderSize = 64;
 	
 	private byte[] head = new byte[7];
 	private byte[] tail = new byte[2];
@@ -32,7 +32,7 @@ public class SocketSession {
 	}
 	
 	public boolean isFilled4body() {
-		if(body.length() == bodyLength - 2)
+		if(body.length() == bodyLength)
 			return true;
 		return false;
 	}
