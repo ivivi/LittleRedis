@@ -8,7 +8,8 @@ public class SeparatorUtil {
     private static final byte SEPARATOR_SUB_SON = '~';
 	*/
 	
-    public static final byte SEPARATOR_MAIN = '\b';
-    public static final byte SEPARATOR_SUB = '\f';
-    public static final byte SEPARATOR_SUB_SON = '\n';
+    public static final char SEPARATOR_MAIN = '\b';
+    public static final char SEPARATOR_SUB = '\f';
+    public static final char SEPARATOR_SUB_SON = '\n';
+
 }
